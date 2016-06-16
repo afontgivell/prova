@@ -2,12 +2,18 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <title>{% block title %}Welcome!{% endblock %}</title>
+        <title>{% block title %}Anton Lluis CALC{% endblock %}</title>
         {% block stylesheets %}{% endblock %}
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
     </head>
     <body>
+        <head>
+            <title>Anton Lluis CALC</title>
+        </head>
+        <br>
         {% block body %}{% endblock %}
+        <br>
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         {% block javascripts %}{% endblock %}
     </body>
 </html>
