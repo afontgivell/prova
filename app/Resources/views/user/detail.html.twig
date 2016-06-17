@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <form action="{{ path(action) }}" method="post">
+        {% if user.id %}
+            (id: {{ user.id }} <br>
+        {% endif %}
+        <label>username: <input type="text" name="username" value="{{ user.username }}"></label>
+        <br>
+        <label>email: <input type="text" name="email" value="{{ user.email }}"></label>
+        <br>
+        <input type="hidden" name="id" value="{{ user.id }}">
+        <input type="submit" value="{{ submitButton }}">
+    </form>
+{% endblock %}

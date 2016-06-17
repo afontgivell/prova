@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <button onclick="window.location.href = '{{ path('app_show_new') }}';">add new user</button>
+    <h2>user list:</h2>
+    {% for user in userList %}
+        <h3>
+            {{ user.id }} - {{ user.username | escape }} ({{ user.email | escape }})
+            <br>
+            <button onclick="window.location.href = '{{ path('app_show_update', {'id': user.id}) }}';">update</button>
+            <button onclick="window.location.href = '{{ path('app_delete_user', {'id': user.id}) }}';">delete</button>
+        </h3>
+    {% endfor %}
+    <p></p>
+    {% for message in app.session.flashBag.get("messages") %}
+        <span style="color:red;">{{ message }}</span>
+        <br>
+    {% endfor %}
+{% endblock %}
