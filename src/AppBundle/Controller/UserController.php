@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\User;
+use AppBundle\Form\UserType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
@@ -33,10 +34,13 @@ class UserController extends Controller
     public function showNewUserAction()
     {
         $user = new User();
+        $form = $this->createForm(UserType::class, $user);
         $action = 'app_add_new';
         $submitButton = 'add user';
+
         return $this->render(':user:detail.html.twig', [
             'user' => $user,
+            'form' => $form->createView(),
             'action' => $action,
             'submitButton' => $submitButton,
         ]);
@@ -48,21 +52,31 @@ class UserController extends Controller
      */
     public function addUserAction(Request $request)
     {
-        $username = $request->request->get('username');
-        $email = $request->request->get('email');
-
         $user = new User();
-        $user->setUsername($username);
-        $user->setEmail($email);
+        $form = $this->createForm(UserType::class, $user);
+        $form->handleRequest($request);
 
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->persist($user);
-        $entityManager->flush();
+        if($form->isValid()){
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($user);
+            $entityManager->flush();
 
-        $this->addFlash("messages", "user added");
-        $this->addFlash("messages", "(".$user->getUsername().")");
+            $this->addFlash("messages", "user added");
+            $this->addFlash("messages", "(".$user->getUsername().")");
 
-        return $this->redirect($this->generateUrl('app_user_index'));
+            return $this->redirect($this->generateUrl('app_user_index'));
+        }else{
+            $this->addFlash("messages", "some errors where found.");
+
+            return $this->render(':user:detail.html.twig',
+                [
+                    'user' => $user,
+                    'form' => $form->createView(),
+                    'action' => 'app_add_new',
+                    'submitButton' => 'add user',
+                ]
+            );
+        }
     }
 
     /**
@@ -74,12 +88,14 @@ class UserController extends Controller
         $entityManager = $this->getDoctrine()->getManager();
         $userRepository = $entityManager->getRepository('AppBundle:User');
         $user = $userRepository->find($id);
+        $form = $this->createForm(UserType::class, $user);
 
         $action = 'app_do_update';
         $submitButton = 'update user';
 
         return $this->render(':user:detail.html.twig', [
             'user' => $user,
+            'form' => $form->createView(),
             'action' => $action,
             'submitButton' => $submitButton,
         ]);
@@ -92,23 +108,30 @@ class UserController extends Controller
     public function doUpdateUserAction(Request $request)
     {
         $id = $request->request->get('id');
-        $username = $request->request->get('username');
-        $email = $request->request->get('email');
-        
+
         $entityManager = $this->getDoctrine()->getManager();
         $userRepository = $entityManager->getRepository('AppBundle:User');
         $user = $userRepository->find($id);
-        
-        $user->setUsername($username);
-        $user->setEmail($email);
-        $user->setUpdatedAt(new \DateTime());
+        $form = $this->createForm(UserType::class, $user);
+        $form->handleRequest($request);
 
-        $entityManager->flush();
+        if($form->isValid()){
+            $entityManager->flush();
+            $this->addFlash("messages", "user updated");
+            $this->addFlash("messages", "(".$user->getUsername().")");
+            return $this->redirect($this->generateUrl('app_user_index'));
+        }else{
+            $this->addFlash("some errors where found.");
 
-        $this->addFlash("messages", "user updated");
-        $this->addFlash("messages", "(".$user->getUsername().")");
-
-        return $this->redirectToRoute('app_user_index');
+            return $this->render(':user:detail.html.twig',
+                [
+                    'user' => $user,
+                    'form' => $form->createView(),
+                    'action' => 'app_do_update',
+                    'submitButton' => 'update user',
+                ]
+            );
+        }
     }
 
     /**

@@ -11,9 +11,10 @@
             <button onclick="window.location.href = '{{ path('app_delete_user', {'id': user.id}) }}';">delete</button>
         </h3>
     {% endfor %}
-    <p></p>
-    {% for message in app.session.flashBag.get("messages") %}
-        <span style="color:red;">{{ message }}</span>
-        <br>
-    {% endfor %}
+    <p>
+        {% for message in app.session.flashBag.get("messages") %}
+            <span style="color:red;">{{ message }}</span>
+            <br>
+        {% endfor %}
+    </p>
 {% endblock %}

@@ -3,6 +3,8 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints;
 
 /**
  * User
@@ -10,6 +12,8 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="app_user")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\UserRepository")
  * @ORM\HasLifecycleCallbacks()
+ * @UniqueEntity(fields={"username"}, message="this username already exists")
+ * @UniqueEntity(fields={"email"}, message="this email already exists")
  */
 class User
 {
@@ -26,6 +30,8 @@ class User
      * @var string
      *
      * @ORM\Column(name="email", type="string", length=255, unique=true)
+     * @Constraints\NotBlank(message="email cannot be blank")
+     * @Constraints\Email(message="not a valid email")
      */
     private $email;
 
@@ -33,6 +39,9 @@ class User
      * @var string
      *
      * @ORM\Column(name="username", type="string", length=255, unique=true)
+     * @Constraints\NotBlank(message="username cannot be blank")
+     * @Constraints\Length(min="3", minMessage="username must have three or more letters",
+     *     max="10", maxMessage="username can't have more than ten letters")
      */
     private $username;
 

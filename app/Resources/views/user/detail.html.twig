@@ -1,15 +1,26 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <form action="{{ path(action) }}" method="post">
+    {% for message in app.session.flashBag.get("messages") %}
+        <span style="color:red;">{{ message }}</span>
+        <br>
+    {% endfor %}
+    <form action="{{ path(action) }}" method="post" novalidate="novalidate">
+        <ul>
+            {% for error in form.vars.errors %}
+                <li style="color:red;">{{ error.message }}</li>
+            {% endfor %}
+        </ul>
         {% if user.id %}
-            (id: {{ user.id }} <br>
+            (id: {{ user.id }})<br>
         {% endif %}
-        <label>username: <input type="text" name="username" value="{{ user.username }}"></label>
-        <br>
-        <label>email: <input type="text" name="email" value="{{ user.email }}"></label>
-        <br>
+        <span>{{ form_label(form.username) }} {{ form_widget(form.username) }}</span>
+        <span>{{ form_label(form.email) }} {{ form_widget(form.email) }}</span>
         <input type="hidden" name="id" value="{{ user.id }}">
+        {{ form_rest(form) }}
         <input type="submit" value="{{ submitButton }}">
     </form>
+    <div>
+    {{ dump(form.vars.value) }}
+    </div>
 {% endblock %}
